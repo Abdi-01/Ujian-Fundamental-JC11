@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Madding</title>
+    <style>
+        .border {
+            border: 1px solid blue;
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+
+<body>
+    <center>
+        <br>
+        <h2>Welcome to Madding</h2><br>
+        <div id="portal">
+            <input type="text" id="username" placeholder="Masukkan ID"><br><br><input type="password" id="Password"
+                placeholder="Masukkan Password"><br><br><input type="button" value="Login" id="btLogin"
+                onclick="login()"><br>
+        </div>
+        <br>
+        <table class="border">
+            <thead id="tbAdmin">
+                <tr>
+                    <th class="border">No</th>
+                    <td class="border">Kegiatan</td>
+                    <td class="border">Hari</td>
+                    <td class="border">Poster</td>
+                    <td class="border">Action</td>
+            </thead>
+            <tbody id="tbAdminBody">
+
+            </tbody>
+
+        </table><br>
+        <!-- <table class="border">
+            <thead id="tbUser">
+
+            </thead>
+            <tbody id="tbUserBody">
+
+            </tbody>
+
+        </table> -->
+        <h3 id="notifUser">
+
+        </h3>
+    </center>
+    <script>
+        class dataMadding {
+            constructor(kegiatan, hari, poster) {
+                this.kegiatan = kegiatan,
+                    this.hari = hari,
+                    this.poster = poster
+            }
+        }
+
+        class user {
+            constructor(nama, pass, role) {
+                this.userid = nama,
+                    this.passw = pass,
+                    this.role = role
+            }
+        }
+
+        var userID = [new user("admin", "admin", "admin"), new user("Al", "1234", "user")]
+        var lari = 'https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,q_auto:best,w_640/v1531381934/gnxwixkdwgbrjnddpu3j.jpg'
+        var renang = 'https://2.bp.blogspot.com/-O3O5ZT0w1dE/V5zILW-NxTI/AAAAAAAAPT8/IdloiGjlaOU0PHo3uKcpvUxGi58UUW75QCLcB/s1600/kejurnas-renang2.jpg'
+        var futsal = 'https://sportsgroundproduction.blob.core.windows.net/cms/14667/newsarticles/82421_wo.jpg'
+        var listKegiatan = [new dataMadding("Lari", "Senin", lari), new dataMadding("Renang", "Selasa", renang), new dataMadding("Futsal", "Rabu", futsal)]
+
+        function cekUser(nama, pass) {
+            for (i = 0; i < userID.length; i++) {
+                if (userID[i].userid == nama && userID[i].passw == pass) {
+                    return userID[i].role
+                }
+            }
+            // return false
+        }
+        function login() {
+            var username = document.getElementById("username").value
+            var pass = document.getElementById("Password").value
+            //var notif = `Anda adalah ${username} <input type="button" value="Login" id="btLogin" onclick="login()`
+            if (cekUser(username, pass) == "admin") {
+                document.getElementById("btLogin").value = "Logout"
+                document.getElementById("btLogin").id = "btLogout"
+                document.getElementById("btLogout").setAttribute("onclick", "Logout()")
+                document.getElementById("notifUser").innerHTML = "Anda Admin"
+                document.getElementById("username").value = ''
+                document.getElementById("Password").value = ''
+                printAdmin(true)
+
+            }
+            else if (cekUser(username, pass) == "user") {
+                document.getElementById("btLogin").value = "Logout"
+                document.getElementById("btLogin").id = "btLogout"
+                document.getElementById("btLogout").setAttribute("onclick", "Logout()")
+                document.getElementById("notifUser").innerHTML = `Anda ${username}`
+                document.getElementById("username").value = ''
+                document.getElementById("Password").value = ''
+                printUser(true)
+            } else {
+                document.getElementById("btLogin").value = "Oke"
+                document.getElementById("btLogin").id = "btLogout"
+                document.getElementById("btLogout").setAttribute("onclick", "Logout()")
+                document.getElementById("notifUser").innerHTML = `Anda Tidak Terdaftar`
+            }
+        }
+
+        function Logout() {
+            document.getElementById("username").value = ''
+            document.getElementById("Password").value = ''
+            document.getElementById("btLogout").value = "Login"
+            document.getElementById("btLogout").id = "btLogin"
+            document.getElementById("btLogin").setAttribute("onclick", "login()")
+            document.getElementById("notifUser").innerHTML = ``
+            printAdmin(false)
+            printUser(false)
+        }
+
+        function printAdmin(boolean) {
+            if (boolean == true) {
+                var outBody = ''
+                if (listKegiatan.length > 0) {
+                    for (i = 0; i < listKegiatan.length; i++) {
+                        outBody += `            <tr>
+        <th class="border" id="no${i}">${i + 1}</th>
+        <td class="border" id="kegiatan${i}">${listKegiatan[i].kegiatan}</td>
+        <td class="border" id="hari${i}">${listKegiatan[i].hari}</td>
+        <td class="border" id="poster${i}"><img src="${listKegiatan[i].poster}" alt="Poster" style="width:100px"</td>
+        <td class="border" id="act${i}"><input type="button" value="Delete" id="btDelete" onclick="deleteAdmin(${i})"><input type="button" value="Edit" id="btEdit" onclick="editAdmin(${i})"></td>
+    </tr>`
+                    }
+                }
+                outBody +=
+                    `<tr>
+        <td class="border"></td>
+        <td class="border"><input type="text" id="kegiatanBaru" placeholder="Masukkan Nama Kegiatan"></td>
+        <td class="border"><select id="hariBaru">
+        <option value="Senin">Senin</option>
+        <option value="Selasa">Selasa</option>
+        <option value="Rabu">Rabu</option>
+        <option value="Kamis">Kamis</option>
+        <option value="Jumat">Jumat</option>
+        <option value="Sabtu">Sabtu</option>
+        <option value="Minggu">Minggu</option>
+          </select></td>
+        <td class="border"><input type="text" id="posterBaru" placeholder="Masukkan Link"></td>
+        <td class="border"><input type="button" value="Add to do" id="btAdd" onclick="addKegiatan()"></td>
+    </tr>`
+
+
+                document.getElementById("tbAdminBody").innerHTML = outBody
+            }
+            else if (boolean == false) {
+                document.getElementById("tbAdminBody").innerHTML = ''
+            }
+        }
+
+        function editAdmin(num) {
+            printAdmin(true)
+            document.getElementById(`kegiatan${num}`).innerHTML = `<input type="text" id="kegiatanEdit" placeholder="${listKegiatan[num].kegiatan}">`
+            document.getElementById(`hari${num}`).innerHTML = `<select id="hariEdit">
+    <option value="Senin">Senin</option>
+    <option value="Selasa">Selasa</option>
+    <option value="Rabu">Rabu</option>
+    <option value="Kamis">Kamis</option>
+    <option value="Jumat">Jumat</option>
+    <option value="Sabtu">Sabtu</option>
+    <option value="Minggu">Minggu</option>
+    </select>`
+            document.getElementById(`poster${num}`).innerHTML = `<input type="text" id="posterEdit">`
+            document.getElementById(`act${num}`).innerHTML = `<input type="button" value="Cancel" id="btCancel" onclick="cancelAdmin(${num})"><input type="button" value="Save" id="btSave" onclick="saveAdmin(${num})">`
+        }
+
+        function saveAdmin(num) {
+            var e = document.getElementById("hariEdit");
+            var kegiatan = document.getElementById("kegiatanEdit").value
+            var hari = e.options[e.selectedIndex].value
+            var poster = document.getElementById("posterEdit").value
+            if (kegiatan == '' || hari == '' || poster == '') {
+                alert('Lengkapi data terlebih dahulu')
+            } else {
+                listKegiatan[num].kegiatan = kegiatan
+                listKegiatan[num].hari = hari
+                listKegiatan[num].poster = poster
+                var addP = new dataMadding(kegiatan, hari, poster)
+                alert("Pembaruan Berhasil")
+                document.getElementById(`kegiatan${num}`).innerHTML = listKegiatan[num].kegiatan
+                document.getElementById(`hari${num}`).innerHTML = listKegiatan[num].hari
+                document.getElementById(`poster${num}`).innerHTML = `<img src=" ${listKegiatan[num].poster}" alt="barang" style="width:100px">`
+                document.getElementById(`act${num}`).innerHTML = `<input type="button" value="Delete" id="btDelete" onclick="deleteAdmin(${num})"><input type="button" value="Edit" id="btEdit" onclick="editAdmin(${num})">`
+                printAdmin(true)
+            }
+        }
+
+        function deleteAdmin(num) {
+            document.getElementById(`act${num}`).innerHTML = `<input type="button" value="Yes" id="btYesDelete" onclick="yes(${num})"><input type="button" value="No" id="btNoEdit" onclick="no(${num})">`
+        }
+
+        function yes(num) {
+            listKegiatan.splice(num, 1)
+            printAdmin(true)
+        }
+
+        function no(num) {
+            document.getElementById(`kegiatan${num}`).innerHTML = listKegiatan[num].kegiatan
+            document.getElementById(`hari${num}`).innerHTML = listKegiatan[num].hari
+            document.getElementById(`poster${num}`).innerHTML = `<img src=" ${listKegiatan[num].poster}" alt="barang" style="width:100px">`
+            document.getElementById(`act${num}`).innerHTML = `<input type="button" value="Delete" id="btDelete" onclick="deleteAdmin(${num})"><input type="button" value="Edit" id="btEdit" onclick="editAdmin(${num})"> `
+        }
+
+        function cancelAdmin(num) {
+            printAdmin(true)
+        }
+
+        function addKegiatan() {
+            var e = document.getElementById("hariBaru");
+            var kegiatan = document.getElementById("kegiatanBaru").value
+            var hari = e.options[e.selectedIndex].value
+            var poster = document.getElementById("posterBaru").value
+            if (kegiatan == '' || hari == '' || poster == '') {
+                alert('Lengkapi data terlebih dahulu')
+            } else {
+                var addP = new dataMadding(kegiatan, hari, poster)
+                listKegiatan.push(addP)
+                printAdmin(true)
+            }
+        }
+        //http://wanitaindonesia.co.id/images/article/17110088.jpg
+        function printUser(boolean) {
+            if (boolean == true) {
+                var outBody = ''
+                if (listKegiatan.length > 0) {
+                    for (i = 0; i < listKegiatan.length; i++) {
+                        outBody += `            <tr>
+        <th class="border" id="no${i}">${i + 1}</th>
+        <td class="border" id="kegiatan${i}">${listKegiatan[i].kegiatan}</td>
+        <td class="border" id="hari${i}">${listKegiatan[i].hari}</td>
+        <td class="border" id="poster${i}"><img src="${listKegiatan[i].poster}" alt="Poster" style="width:100px"</td>
+        <td class="border" id="act${i}"></td>
+    </tr>`
+                    }
+                }
+
+                document.getElementById("tbAdminBody").innerHTML = outBody
+            }
+            else if (boolean == false) {
+                document.getElementById("tbAdminBody").innerHTML = ''
+            }
+        }
+
+    </script>
+</body>
+
+</html>
